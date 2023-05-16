@@ -32,6 +32,7 @@ import org.springframework.util.FileCopyUtils;
 /**
  * Interface for a resource descriptor that abstracts from the actual
  * type of underlying resource, such as a file or class path resource.
+ * 从实际类型的底层资源中抽象出来的统一资源接口
  *
  * <p>An InputStream can be opened for every resource if it exists in
  * physical form, but a URL or File handle can just be returned for
@@ -60,6 +61,7 @@ public interface Resource extends InputStreamSource {
 	 * <p>This method performs a definitive existence check, whereas the
 	 * existence of a {@code Resource} handle only guarantees a valid
 	 * descriptor handle.
+	 * 决定资源是否真是存在
 	 */
 	boolean exists();
 
@@ -71,6 +73,7 @@ public interface Resource extends InputStreamSource {
 	 * Note that actual content reading may still fail when attempted.
 	 * However, a value of {@code false} is a definitive indication
 	 * that the resource content cannot be read.
+	 * 指明资源的内容是否可以通过{@link #getInputStream()}读取
 	 * @see #getInputStream()
 	 * @see #exists()
 	 */
@@ -83,6 +86,7 @@ public interface Resource extends InputStreamSource {
 	 * If {@code true}, the InputStream cannot be read multiple times,
 	 * and must be read and closed to avoid resource leaks.
 	 * <p>Will be {@code false} for typical resource descriptors.
+	 * 资源是否已经被打开
 	 */
 	default boolean isOpen() {
 		return false;
@@ -95,6 +99,7 @@ public interface Resource extends InputStreamSource {
 	 * <p>This is conservatively {@code false} by default.
 	 * @since 5.0
 	 * @see #getFile()
+	 * 决定资源是否是一个文件
 	 */
 	default boolean isFile() {
 		return false;
@@ -167,6 +172,7 @@ public interface Resource extends InputStreamSource {
 
 	/**
 	 * Determine the content length for this resource.
+	 * 资源内容的长度
 	 * @throws IOException if the resource cannot be resolved
 	 * (in the file system or as some other known physical resource type)
 	 */
@@ -174,6 +180,7 @@ public interface Resource extends InputStreamSource {
 
 	/**
 	 * Determine the last-modified timestamp for this resource.
+	 * 资源最后的修改时间
 	 * @throws IOException if the resource cannot be resolved
 	 * (in the file system or as some other known physical resource type)
 	 */
