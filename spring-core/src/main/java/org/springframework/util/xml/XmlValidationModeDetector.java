@@ -93,6 +93,7 @@ public class XmlValidationModeDetector {
 
 		// Peek into the file to look for DOCTYPE.
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+//			是否为DTD校验模式，默认为false
 			boolean isDtdValidated = false;
 			String content;
 			while ((content = reader.readLine()) != null) {
@@ -100,10 +101,12 @@ public class XmlValidationModeDetector {
 				if (!StringUtils.hasText(content)) {
 					continue;
 				}
+				// <1> 包含 DOCTYPE 为 DTD 模式
 				if (hasDoctype(content)) {
 					isDtdValidated = true;
 					break;
 				}
+				// <2>  hasOpeningTag 方法会校验，如果这一行有 < ，并且 < 后面跟着的是字母，则返回 true 。采用XSD模式
 				if (hasOpeningTag(content)) {
 					// End of meaningful data...
 					break;
