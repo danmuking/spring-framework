@@ -31,6 +31,7 @@ import org.springframework.util.ResourceUtils;
  * <p>Bean properties of type {@code Resource} and {@code Resource[]} can be populated
  * from Strings when running in an ApplicationContext, using the particular
  * context's resource loading strategy.
+ * 资源加载策略
  *
  * @author Juergen Hoeller
  * @since 10.03.2004

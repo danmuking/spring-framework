@@ -40,6 +40,7 @@ import org.springframework.util.xml.XmlValidationModeDetector;
  * you might start your application like as follows:
  *
  * <pre class="code">java -Djavax.xml.parsers.DocumentBuilderFactory=oracle.xml.jaxp.JXDocumentBuilderFactory MyMainClass</pre>
+ * 默认的文档加载器实现类
  *
  * @author Rob Harrop
  * @author Juergen Hoeller
@@ -69,10 +70,12 @@ public class DefaultDocumentLoader implements DocumentLoader {
 	public Document loadDocument(InputSource inputSource, EntityResolver entityResolver,
 			ErrorHandler errorHandler, int validationMode, boolean namespaceAware) throws Exception {
 
+//		创建DocumentBuilderFactory
 		DocumentBuilderFactory factory = createDocumentBuilderFactory(validationMode, namespaceAware);
 		if (logger.isTraceEnabled()) {
 			logger.trace("Using JAXP provider [" + factory.getClass().getName() + "]");
 		}
+//		创建DocumentBuilder
 		DocumentBuilder builder = createDocumentBuilder(factory, entityResolver, errorHandler);
 		return builder.parse(inputSource);
 	}
@@ -91,8 +94,11 @@ public class DefaultDocumentLoader implements DocumentLoader {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(namespaceAware);
 
+//		是否启用验证
 		if (validationMode != XmlValidationModeDetector.VALIDATION_NONE) {
+//			启用验证
 			factory.setValidating(true);
+//			VALIDATION_XSD强制开启命名空间支持
 			if (validationMode == XmlValidationModeDetector.VALIDATION_XSD) {
 				// Enforce namespace aware for XSD...
 				factory.setNamespaceAware(true);
