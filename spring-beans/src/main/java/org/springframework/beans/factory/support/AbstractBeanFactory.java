@@ -271,6 +271,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				throw new BeanCurrentlyInCreationException(beanName);
 			}
 
+//			如果容器中没有找到,则从父类容器中加载
 			// Check if bean definition exists in this factory.
 			BeanFactory parentBeanFactory = getParentBeanFactory();
 			if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
@@ -1143,6 +1144,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	/**
 	 * Return whether the specified prototype bean is currently in creation
 	 * (within the current thread).
+	 * 返回特定原型bean是否正在创建
 	 * @param beanName the name of the bean
 	 */
 	protected boolean isPrototypeCurrentlyInCreation(String beanName) {
@@ -1799,10 +1801,13 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			Object beanInstance, String name, String beanName, @Nullable RootBeanDefinition mbd) {
 
 		// Don't let calling code try to dereference the factory if the bean isn't a factory.
+//		如果是工厂bean
 		if (BeanFactoryUtils.isFactoryDereference(name)) {
+//			如果是NullBean,直接返回
 			if (beanInstance instanceof NullBean) {
 				return beanInstance;
 			}
+//			不是工厂bean,报错
 			if (!(beanInstance instanceof FactoryBean)) {
 				throw new BeanIsNotAFactoryException(beanName, beanInstance.getClass());
 			}
@@ -1823,9 +1828,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		if (mbd != null) {
 			mbd.isFactoryBean = true;
 		}
+//		如果BeanDefinition为空,加载缓存中的bean
 		else {
 			object = getCachedObjectForFactoryBean(beanName);
 		}
+		// 若 object 依然为空，则可以确认，beanInstance 一定是 FactoryBean 。从而，使用 FactoryBean 获得 Bean 对象
 		if (object == null) {
 			// Return bean instance from factory.
 			// Caches object obtained from FactoryBean if it is a singleton.

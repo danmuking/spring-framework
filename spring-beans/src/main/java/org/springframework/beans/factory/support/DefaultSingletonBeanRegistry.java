@@ -87,6 +87,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	private final Set<String> registeredSingletons = new LinkedHashSet<>(256);
 
 	/** Names of beans that are currently in creation. */
+//	所有正在创建过程中的bean的名字的集合
 	private final Set<String> singletonsCurrentlyInCreation =
 			Collections.newSetFromMap(new ConcurrentHashMap<>(16));
 
@@ -194,10 +195,14 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					if (singletonObject == null) {
 						singletonObject = this.earlySingletonObjects.get(beanName);
 						if (singletonObject == null) {
+//							从singletonFactory中获取
 							ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 							if (singletonFactory != null) {
+//								获得bean
 								singletonObject = singletonFactory.getObject();
+//								将bean添加到earlySingletonObjects中
 								this.earlySingletonObjects.put(beanName, singletonObject);
+//								从singletonFactories移除
 								this.singletonFactories.remove(beanName);
 							}
 						}
@@ -343,6 +348,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	/**
 	 * Return whether the specified singleton bean is currently in creation
 	 * (within the entire factory).
+	 * 返回bean是否在创建中
 	 * @param beanName the name of the bean
 	 */
 	public boolean isSingletonCurrentlyInCreation(@Nullable String beanName) {
@@ -356,6 +362,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @see #isSingletonCurrentlyInCreation
 	 */
 	protected void beforeSingletonCreation(String beanName) {
+//		将当前bean添加为创建状态
 		if (!this.inCreationCheckExclusions.contains(beanName) && !this.singletonsCurrentlyInCreation.add(beanName)) {
 			throw new BeanCurrentlyInCreationException(beanName);
 		}
@@ -368,6 +375,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @see #isSingletonCurrentlyInCreation
 	 */
 	protected void afterSingletonCreation(String beanName) {
+//		将bean从创建状态移除
 		if (!this.inCreationCheckExclusions.contains(beanName) && !this.singletonsCurrentlyInCreation.remove(beanName)) {
 			throw new IllegalStateException("Singleton '" + beanName + "' isn't currently in creation");
 		}

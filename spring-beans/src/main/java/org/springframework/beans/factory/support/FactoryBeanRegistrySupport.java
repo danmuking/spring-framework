@@ -83,18 +83,24 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 	 * @see org.springframework.beans.factory.FactoryBean#getObject()
 	 */
 	protected Object getObjectFromFactoryBean(FactoryBean<?> factory, String beanName, boolean shouldPostProcess) {
+//		为单例模式且缓存中存在
 		if (factory.isSingleton() && containsSingleton(beanName)) {
+//			单例锁
 			synchronized (getSingletonMutex()) {
+//				从缓存中获取对象
 				Object object = this.factoryBeanObjectCache.get(beanName);
 				if (object == null) {
+//					为空,则从FactoryBean中获取
 					object = doGetObjectFromFactoryBean(factory, beanName);
 					// Only post-process and store if not put there already during getObject() call above
 					// (e.g. because of circular reference processing triggered by custom getBean calls)
+//					从缓存中获取
 					Object alreadyThere = this.factoryBeanObjectCache.get(beanName);
 					if (alreadyThere != null) {
 						object = alreadyThere;
 					}
 					else {
+//						后续处理
 						if (shouldPostProcess) {
 							if (isSingletonCurrentlyInCreation(beanName)) {
 								// Temporarily return non-post-processed object, not storing it yet..
@@ -102,6 +108,7 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 							}
 							beforeSingletonCreation(beanName);
 							try {
+//								对bean对象进行后置处理,默认不做处理
 								object = postProcessObjectFromFactoryBean(object, beanName);
 							}
 							catch (Throwable ex) {
@@ -112,6 +119,7 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 								afterSingletonCreation(beanName);
 							}
 						}
+//						添加到缓存中
 						if (containsSingleton(beanName)) {
 							this.factoryBeanObjectCache.put(beanName, object);
 						}
@@ -120,7 +128,9 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 				return object;
 			}
 		}
+//		缓存中不存在
 		else {
+//			从FactoryBean中创建
 			Object object = doGetObjectFromFactoryBean(factory, beanName);
 			if (shouldPostProcess) {
 				try {
@@ -156,6 +166,7 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 
 		// Do not accept a null value for a FactoryBean that's not fully
 		// initialized yet: Many FactoryBeans just return null then.
+//		如果factory返回null,封装一下
 		if (object == null) {
 			if (isSingletonCurrentlyInCreation(beanName)) {
 				throw new BeanCurrentlyInCreationException(
