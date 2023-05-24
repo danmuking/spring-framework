@@ -172,6 +172,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * Return the (raw) singleton object registered under the given name.
 	 * <p>Checks already instantiated singletons and also allows for an early
 	 * reference to a currently created singleton (resolving a circular reference).
+	 * 检查已经实例化的bean,并运行循环引用
 	 * @param beanName the name of the bean to look for
 	 * @param allowEarlyReference whether early references should be created or not
 	 * @return the registered singleton object, or {@code null} if none found
@@ -179,9 +180,13 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	@Nullable
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 		// Quick check for existing instance without full singleton lock
+//		从单例中加载bean
 		Object singletonObject = this.singletonObjects.get(beanName);
+//		缓存中的bean为空且当前的bean正在创建
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+//			从earlySingletonObjects中获取
 			singletonObject = this.earlySingletonObjects.get(beanName);
+//			earlySingletonObjects为空且允许提前创建
 			if (singletonObject == null && allowEarlyReference) {
 				synchronized (this.singletonObjects) {
 					// Consistent creation of early reference within full singleton lock
