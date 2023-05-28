@@ -343,6 +343,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	/**
 	 * Return whether the specified singleton bean is currently in creation
 	 * (within the entire factory).
+	 * 返回指定bean是否正在创建过程中
 	 * @param beanName the name of the bean
 	 */
 	public boolean isSingletonCurrentlyInCreation(@Nullable String beanName) {
